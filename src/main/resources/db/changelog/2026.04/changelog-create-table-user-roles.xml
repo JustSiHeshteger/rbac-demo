@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="changelog-create-table-user-roles" author="Strigalev Andrey">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists schemaName="rbac_demo" tableName="user_roles"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="user_roles"
+                     schemaName="rbac_demo"
+                     remarks="Таблица для хранения ролей для пользователя">
+
+            <column name="user_id"
+                    type="UUID"
+                    remarks="id пользователя">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="role_id"
+                    type="UUID"
+                    remarks="id роли">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addPrimaryKey schemaName="rbac_demo"
+                       tableName="user_roles"
+                       columnNames="user_id, role_id"
+                       constraintName="pk_user_roles"/>
+
+        <createIndex schemaName="rbac_demo"
+                     tableName="user_roles"
+                     indexName="idx_user_roles_user_id">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex schemaName="rbac_demo"
+                     tableName="user_roles"
+                     indexName="idx_user_roles_role_id">
+            <column name="role_id"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableSchemaName="rbac_demo"
+                                 baseTableName="user_roles"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_user_roles_user_id_users_id"
+                                 referencedTableSchemaName="rbac_demo"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableSchemaName="rbac_demo"
+                                 baseTableName="user_roles"
+                                 baseColumnNames="role_id"
+                                 constraintName="fk_user_roles_role_id_roles_id"
+                                 referencedTableSchemaName="rbac_demo"
+                                 referencedTableName="roles"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+</databaseChangeLog>

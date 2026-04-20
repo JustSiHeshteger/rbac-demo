@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: rbac-demo
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:12003/rbac-demo
+    username: postgres
+    password: root
+
+  liquibase:
+    url: jdbc:postgresql://localhost:12003/rbac-demo
+    user: postgres
+    password: root
+    enabled: true
+    analytics-enabled: true
+    change-log: classpath:db/changelog/changelog-master.xml
+
+token:
+  secret: Kj9xM2pYcTZ3bVZ6RnRwS3lMbkVvQnVJZ0RyY3NkZmdoaWprbG1ub3BxcnN0dXZ3eHl6MTIzNDU2Nzg5MA==

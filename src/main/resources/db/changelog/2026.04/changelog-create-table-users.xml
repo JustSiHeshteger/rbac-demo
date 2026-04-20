@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="changelog-create-table-users" author="Strigalev Andrey">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="users" schemaName="rbac_demo"/>
+            </not>
+            <not>
+                <indexExists schemaName="rbac_demo" tableName="users" indexName="idx_users_login"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="users"
+                     schemaName="rbac_demo"
+                     remarks="Таблица для хранения пользователей">
+
+            <column name="id"
+                    type="UUID"
+                    defaultValueComputed="gen_random_uuid()"
+                    remarks="id пользователя">
+                <constraints primaryKey="true"
+                             nullable="false"/>
+            </column>
+
+            <column name="login"
+                    type="VARCHAR(100)"
+                    remarks="Имя пользователя">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="password"
+                    type="VARCHAR(255)"
+                    remarks="Имя пользователя">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="email"
+                    type="VARCHAR(100)"
+                    remarks="Почта пользователя">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="created_at"
+                    type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP"
+                    remarks="Время создания пользователя">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at"
+                    type="TIMESTAMP"
+                    defaultValueComputed="CURRENT_TIMESTAMP"
+                    remarks="Время последнего обновления пользователя">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <createIndex schemaName="rbac_demo"
+                     tableName="users"
+                     indexName="idx_users_login"
+                     unique="true">
+            <column name="login"/>
+        </createIndex>
+
+        <createIndex schemaName="rbac_demo"
+                     tableName="users"
+                     indexName="idx_users_email"
+                     unique="true">
+            <column name="email"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>
