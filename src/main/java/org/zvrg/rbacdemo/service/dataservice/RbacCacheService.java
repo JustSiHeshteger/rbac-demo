@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface RbacCacheService {
 
-    Flux<GrantedAuthority> getUserRoles(UUID userId);
+    Flux<GrantedAuthority> findAuthoritiesByUserId(UUID userId);
 
     Mono<Void> addRole(UUID userId, String role);
 

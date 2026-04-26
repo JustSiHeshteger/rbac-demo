@@ -24,7 +24,7 @@ public class TestController {
             value = "/test"
     )
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAnyAuthority('USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     public Mono<Void> login(@NotNull @Parameter(name = "id", description = "", required = true, in = ParameterIn.QUERY) @Valid @RequestParam(value = "id", required = true) Integer id,
                             @Parameter(hidden = true) final ServerWebExchange exchange) {
         return Mono.just(id)

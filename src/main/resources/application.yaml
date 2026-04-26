@@ -3,7 +3,7 @@ spring:
     name: rbac-demo
 
   r2dbc:
-    url: r2dbc:postgresql://localhost:12003/rbac-demo
+    url: r2dbc:postgresql://localhost:12003/rbac-demo?options=-c%20search_path%3Drbac_demo
     username: postgres
     password: root
 

@@ -21,7 +21,7 @@ public class RbacCacheServiceImpl implements RbacCacheService {
     private final ReactiveRedisTemplate<String, String> reactiveRedisTemplate;
 
     @Override
-    public Flux<GrantedAuthority> getUserRoles(UUID userId) {
+    public Flux<GrantedAuthority> findAuthoritiesByUserId(UUID userId) {
         return reactiveRedisTemplate.opsForSet()
                 .members(buildKey(userId))
                 .map(SimpleGrantedAuthority::new);

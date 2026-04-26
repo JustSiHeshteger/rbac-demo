@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
@@ -18,23 +17,19 @@ public class RbacService {
     private final RbacCacheService rbacCacheService;
 
     public Flux<GrantedAuthority> findRolesByUserId(UUID userId) {
-        return Mono.just(userId)
-                .flatMapMany(id ->
-                    rbacCacheService.getUserRoles(id)
-                            .switchIfEmpty(Flux.defer(() -> {
-                                final var savedRoles = rbacDbService.getAuthoritiesByUserId(id);
+        return rbacCacheService.findAuthoritiesByUserId(userId)
+                .switchIfEmpty(Flux.defer(() -> rbacDbService.getAuthoritiesByUserId(userId)
+                        .collectList()
+                        .flatMapMany(roles -> {
+                            if (roles.isEmpty()) return Flux.empty();
 
-                                return savedRoles
-                                        .collectList()
-                                        .flatMapMany(roles -> {
-                                            final var rolesToSave = roles.stream()
-                                                    .map(GrantedAuthority::getAuthority)
-                                                    .toList();
+                            final var rolesToSave = roles.stream()
+                                    .map(GrantedAuthority::getAuthority)
+                                    .toList();
 
-                                            return rbacCacheService.saveRoles(userId, rolesToSave)
-                                                    .thenMany(Flux.fromIterable(roles));
-                                        });
-                            }))
+                            return rbacCacheService.saveRoles(userId, rolesToSave)
+                                    .thenMany(Flux.fromIterable(roles));
+                        }))
                 );
     }
 
