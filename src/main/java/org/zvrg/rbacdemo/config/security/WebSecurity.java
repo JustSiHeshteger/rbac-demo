@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.zvrg.rbacdemo.config.security.filter.JwtAuthenticationFilter;
+import org.zvrg.rbacdemo.service.dataservice.RbacService;
+import org.zvrg.rbacdemo.service.securityservice.JwtService;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -21,15 +23,16 @@ import org.zvrg.rbacdemo.config.security.filter.JwtAuthenticationFilter;
 @RequiredArgsConstructor
 public class WebSecurity {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     @Bean
     SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http,
-                                                     ReactiveAuthenticationManager authenticationManager) {
+                                                     ReactiveAuthenticationManager authenticationManager,
+                                                     JwtService jwtService,
+                                                     RbacService rbacService) {
+        final var jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtService, rbacService);
+
         return http
                 .authorizeExchange(
                         exchange -> exchange
-                                .pathMatchers(HttpMethod.POST, "/users").permitAll()
                                 .pathMatchers(HttpMethod.POST, "/login").permitAll()
                                 .pathMatchers(HttpMethod.POST, "/register").permitAll()
                                 .anyExchange().authenticated())

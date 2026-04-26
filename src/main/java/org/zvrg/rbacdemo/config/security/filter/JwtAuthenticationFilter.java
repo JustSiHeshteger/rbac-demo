@@ -1,22 +1,20 @@
 package org.zvrg.rbacdemo.config.security.filter;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
-import org.zvrg.rbacdemo.service.securityservice.JwtService;
 import org.zvrg.rbacdemo.service.dataservice.RbacService;
+import org.zvrg.rbacdemo.service.securityservice.JwtService;
 import reactor.core.publisher.Mono;
 
-import java.util.Objects;
 import java.util.UUID;
 
-@Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter implements WebFilter {
 
@@ -25,40 +23,40 @@ public class JwtAuthenticationFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        final var token = jwtService.extractToken(exchange);
-
-        if (Objects.isNull(token))
-            return chain.filter(exchange);
-
-        return jwtService.validateToken(token)
-                .flatMap(isValid -> isValid
-                        ? authenticateAndContinue(token, exchange, chain)
-                        : handleInvalidToken(exchange)
+        return jwtService.extractToken(exchange)
+                .switchIfEmpty(chain.filter(exchange)
+                        .then(Mono.empty())
                 )
-                .onErrorResume(_ -> handleInvalidToken(exchange));
+                .flatMap(token -> jwtService.validateToken(token)
+                        .flatMap(isValid -> isValid
+                                ? authenticateAndContinue(token, exchange, chain)
+                                : handleInvalidToken(exchange)
+                        )
+                )
+                .onErrorResume(ex -> {
+                    log.error(ex.getMessage(), ex);
+                    return handleInvalidToken(exchange);
+                });
     }
 
-    private Mono<? extends Void> authenticateAndContinue(String token,
+    private Mono<Void> authenticateAndContinue(String token,
                                                          ServerWebExchange exchange,
                                                          WebFilterChain chain) {
+        // TODO сделать refresh токен
         return jwtService.extractSubject(token)
                 .map(UUID::fromString)
-                .flatMap(userId ->
-                    // TODO сделать refresh токен
-                        rbacService.findRolesByUserId(userId)
+                .flatMap(userId -> rbacService.findRolesByUserId(userId)
                                 .collectList()
-                                .flatMap(auth -> {
-                                    final Authentication authentication =
-                                            new UsernamePasswordAuthenticationToken(userId,null, auth);
-                                    return chain.filter(exchange)
-                                            .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
-                                })
+                                .map(roles -> new UsernamePasswordAuthenticationToken(userId,null, roles))
+                )
+                .flatMap(auth -> chain.filter(exchange)
+                                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(auth))
                 );
     }
 
-    private Mono<? extends Void> handleInvalidToken(ServerWebExchange exchange) {
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        return exchange.getResponse().setComplete();
+    private Mono<Void> handleInvalidToken(ServerWebExchange exchange) {
+        return Mono.fromRunnable(() -> exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED))
+                        .then(exchange.getResponse().setComplete());
     }
 
 }

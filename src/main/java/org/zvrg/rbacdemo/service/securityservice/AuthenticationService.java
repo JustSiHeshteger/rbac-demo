@@ -22,10 +22,8 @@ public class AuthenticationService {
 
     public Mono<String> authenticate(LoginDto loginDto) {
         return reactiveAuthenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getLogin(), loginDto.getPassword()))
-                .map(auth -> {
-                    final var userDetails = (SecurityUser) auth.getPrincipal();
-                    return jwtService.generateToken(userDetails.getId());
-                });
+                .mapNotNull(auth -> (SecurityUser) auth.getPrincipal())
+                .flatMap(securityUser -> jwtService.generateToken(securityUser.getId()));
     }
 
     public Mono<Void> register(RegisterDto registerDto) {

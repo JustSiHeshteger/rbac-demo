@@ -59,7 +59,7 @@ public class RbacDbServiceImpl implements RbacDbService {
     }
 
     private Flux<GrantedAuthority> mapRoleToAuthorities(RoleEntity role) {
-        final Flux<GrantedAuthority> roleAuth = Flux.just(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+        final Flux<GrantedAuthority> roleAuth = Flux.just(new SimpleGrantedAuthority(role.getName()));
         final Flux<GrantedAuthority> permissions = getPermissionsByRoleId(role.getId())
                 .map(perm -> new SimpleGrantedAuthority(perm.getName()));
 

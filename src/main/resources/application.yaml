@@ -36,4 +36,5 @@ logging:
           PARAM: DEBUG
 
 token:
+  expiration-hours: 1
   secret: Kj9xM2pYcTZ3bVZ6RnRwS3lMbkVvQnVJZ0RyY3NkZmdoaWprbG1ub3BxcnN0dXZ3eHl6MTIzNDU2Nzg5MA==
