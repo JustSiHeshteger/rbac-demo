@@ -8,3 +8,11 @@ services:
       - 'POSTGRES_USER=postgres'
     ports:
       - '12003:5432'
+
+  redis:
+    image: 'redis:latest'
+    container_name: 'redis_rbac'
+    command: redis-server --requirepass root
+    ports:
+      - '12004:6379'
+    restart: always

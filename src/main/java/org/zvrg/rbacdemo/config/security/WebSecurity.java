@@ -1,4 +1,4 @@
-package org.zvrg.rbacdemo.config;
+package org.zvrg.rbacdemo.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
-import org.zvrg.rbacdemo.config.filter.JwtAuthenticationFilter;
+import org.zvrg.rbacdemo.config.security.filter.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -31,6 +31,7 @@ public class WebSecurity {
                         exchange -> exchange
                                 .pathMatchers(HttpMethod.POST, "/users").permitAll()
                                 .pathMatchers(HttpMethod.POST, "/login").permitAll()
+                                .pathMatchers(HttpMethod.POST, "/register").permitAll()
                                 .anyExchange().authenticated())
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)

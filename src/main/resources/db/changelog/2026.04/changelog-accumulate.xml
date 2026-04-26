@@ -10,5 +10,6 @@
     <include file="changelog-create-table-permissions.xml" relativeToChangelogFile="true"/>
     <include file="changelog-create-table-user-roles.xml" relativeToChangelogFile="true"/>
     <include file="changelog-create-table-role-permissions.xml" relativeToChangelogFile="true"/>
+    <include file="changelog-insert-initial-rbac-data.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

@@ -1,4 +1,4 @@
-package org.zvrg.rbacdemo.sevice.impl;
+package org.zvrg.rbacdemo.service.dataservice.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,7 +14,7 @@ import org.zvrg.rbacdemo.repository.RolePermissionRepository;
 import org.zvrg.rbacdemo.repository.RoleRepository;
 import org.zvrg.rbacdemo.repository.UserRepository;
 import org.zvrg.rbacdemo.repository.UserRoleRepository;
-import org.zvrg.rbacdemo.sevice.RbacService;
+import org.zvrg.rbacdemo.service.dataservice.RbacDbService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class RbacServiceImpl implements RbacService {
+public class RbacDbServiceImpl implements RbacDbService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;

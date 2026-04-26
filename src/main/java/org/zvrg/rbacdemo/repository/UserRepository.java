@@ -12,4 +12,6 @@ public interface UserRepository extends ReactiveCrudRepository<UserEntity, UUID>
 
     Mono<UserEntity> findByLogin(String login);
 
+    Mono<Boolean> existsByLogin(String login);
+
 }

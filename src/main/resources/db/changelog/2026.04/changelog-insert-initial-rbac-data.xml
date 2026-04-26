@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="changelog-insert-initial-rbac-data" author="Strigalev Andrey">
+
+        <insert schemaName="rbac_demo" tableName="roles">
+            <column name="name" value="ROLE_USER"/>
+        </insert>
+        <insert schemaName="rbac_demo" tableName="roles">
+            <column name="name" value="ROLE_ADMIN"/>
+        </insert>
+
+        <insert schemaName="rbac_demo" tableName="permissions">
+            <column name="name" value="READ_PERMISSION"/>
+        </insert>
+        <insert schemaName="rbac_demo" tableName="permissions">
+            <column name="name" value="WRITE_PERMISSION"/>
+        </insert>
+        <insert schemaName="rbac_demo" tableName="permissions">
+            <column name="name" value="DELETE_PERMISSION"/>
+        </insert>
+
+        <insert schemaName="rbac_demo" tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM rbac_demo.roles WHERE name = 'ROLE_USER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM rbac_demo.permissions WHERE name = 'READ_PERMISSION')"/>
+        </insert>
+
+        <insert schemaName="rbac_demo" tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM rbac_demo.roles WHERE name = 'ROLE_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM rbac_demo.permissions WHERE name = 'READ_PERMISSION')"/>
+        </insert>
+
+        <insert schemaName="rbac_demo" tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM rbac_demo.roles WHERE name = 'ROLE_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM rbac_demo.permissions WHERE name = 'WRITE_PERMISSION')"/>
+        </insert>
+
+        <insert schemaName="rbac_demo" tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM rbac_demo.roles WHERE name = 'ROLE_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM rbac_demo.permissions WHERE name = 'DELETE_PERMISSION')"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>

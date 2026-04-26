@@ -10,9 +10,14 @@ public final class Constants {
 
     public static final class WebConstants {
 
-        public static final String TOKEN = "token";
         public static final String BEARER = "Bearer ";
         public static final String APPLICATION_JSON = "application/json";
+
+    }
+
+    public static final class RoleConstants {
+
+        public static final String ROLE_USER = "ROLE_USER";
 
     }
 
